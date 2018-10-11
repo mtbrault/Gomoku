@@ -5,16 +5,10 @@
 ** main file
 */
 
-#include "Board.hpp"
+#include "IA.hpp"
 
-int	main(int ac, char **av)
+int	main(void)
 {
-	(void)ac;(void)av;
-	std::unique_ptr<Board>	board = std::make_unique<Board>();
-
-	board->initBoard(20);
-	std::cout << board->isEmpty(3, 4) << std::endl;
-	board->putToken(3, 4);
-	std::cout << board->isEmpty(3, 4) << std::endl;
+	std::unique_ptr<IA> ia = std::make_unique<IA>();
 	return 0;
 }

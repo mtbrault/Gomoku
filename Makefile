@@ -12,7 +12,8 @@ RM			=	rm -f
 SRC			=	src/
 
 SRCS		=	$(SRC)main.cpp		\
-				$(SRC)board.cpp
+				$(SRC)board.cpp		\
+				$(SRC)IA.cpp
 
 OBJS		=	$(SRCS:.cpp=.o)
 

@@ -16,8 +16,6 @@ enum State {
 
 #include <vector>
 #include <iostream>
-//#include <memory>
-
 class Board
 {
 public:
