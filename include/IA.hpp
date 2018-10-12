@@ -9,6 +9,7 @@
 	#define IA_HPP_
 
 #include "Board.hpp"
+#include <memory>
 
 class IA {
 public:
