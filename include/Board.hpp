@@ -26,6 +26,7 @@ public:
 	bool	isEmpty(int, int) const;
 	void	putToken(int, int);
 	void	ennemyPutToken(int, int);
+	void test() {std::cout << "Ça marche maggle" << std::endl;};
 
 private:
 	std::vector<std::vector<State> >	_board;

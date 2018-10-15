@@ -15,9 +15,9 @@ def main():
 		compile()
 	elif sys.argv[1] == "fclean":
 		clean()
-	elif sys.argv[2] == "re":
-		compile()
+	elif sys.argv[1] == "re":
 		clean()
+		compile()
 	
 
 if __name__ == '__main__':

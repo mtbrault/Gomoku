@@ -10,6 +10,7 @@
 IA::IA()
 : _board(std::make_unique<Board>())
 {
+	_board->test();
 }
 
 IA::~IA()
