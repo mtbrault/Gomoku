@@ -10,7 +10,10 @@
 IA::IA()
 : _board(std::make_unique<Board>())
 {
-	_board->test();
+	std::string tmp;
+
+	std::cin >> tmp;
+	std::cout << tmp;
 }
 
 IA::~IA()
