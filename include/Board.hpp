@@ -26,9 +26,11 @@ public:
 	bool	isEmpty(int, int) const;
 	void	putToken(int, int);
 	void	ennemyPutToken(int, int);
+	int		getSize() const {return _size;};
 
 private:
 	std::vector<std::vector<State> >	_board;
+	int									_size;
 };
 
 #endif /* !BOARD_HPP_ */

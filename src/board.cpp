@@ -8,6 +8,7 @@
 #include "Board.hpp"
 
 Board::Board()
+	: _board(-1)
 {
 }
 
@@ -19,10 +20,12 @@ void	Board::initBoard(int size)
 {
 	std::vector<State>	tmp;
 
+	_board.clear();
 	for (int i = 0; i < size; i++)
 		tmp.push_back(State::EMPTY);
 	for (int i = 0; i < size; i++)
 		_board.push_back(tmp);
+	_size = size;
 }
 
 bool	Board::isEmpty(int x, int y) const

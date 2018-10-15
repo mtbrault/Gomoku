@@ -10,5 +10,7 @@
 int	main(void)
 {
 	std::unique_ptr<IA> ia = std::make_unique<IA>();
+
+	ia->run();
 	return 0;
 }
