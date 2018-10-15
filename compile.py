@@ -2,7 +2,7 @@
 import os, sys
 
 def clean():
-	os.system("rm -f src/main.o src/board.o src/IA.o gomoku")
+	os.system("rm -f src/main.o src/board.o src/IA.o pbrain-test")
 
 def compile():
 	os.system("g++  -I./include -Wall -Wextra -Werror -std=c++14  -c -o src/main.o src/main.cpp")
