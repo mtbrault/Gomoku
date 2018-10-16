@@ -24,8 +24,8 @@ public:
 
 	void	initBoard(int);
 	bool	isEmpty(int, int) const;
-	void	putToken(int, int);
-	void	ennemyPutToken(int, int);
+	bool	putToken(int, int);
+	bool	ennemyPutToken(int, int);
 	int		getSize() const {return _size;};
 
 private:

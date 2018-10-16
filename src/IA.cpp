@@ -71,9 +71,11 @@ void	IA::turn(const std::string &cmd)
 		std::cout << "ERROR " << ex.what();
 		return ;
 	}
-	_board->ennemyPutToken(x, y);
+	if (!_board->ennemyPutToken(x, y))
+		std::cout << "ERROR empty board";
 	pos = this->play();
-	_board->putToken(pos.first, pos.second);
+	if (!_board->putToken(pos.first, pos.second))
+		std::cout << "ERROR empty board";
 	std::cout << pos.first << "," << pos.second;
 }
 
@@ -82,7 +84,8 @@ void	IA::begin()
 	int	size = _board->getSize();
 
 	std::cout << size / 2 << "," << size / 2;
-	_board->putToken(size / 2, size / 2);
+	if (!_board->putToken(size / 2, size / 2))
+		std::cout << "ERROR empty board";
 }
 
 void	IA::board()
@@ -107,7 +110,8 @@ void	IA::run()
 	std::vector<std::string>	cmd;
 
 	while ("Bouclinf") {
-		std::cin >> line;
+		line.clear();
+		getline(std::cin, line);
 		cmd = parsLine(line, " ");
 		switch (_convertSwitch[cmd[0]]) {
 			case 1 : this->start(cmd[1]); break;

@@ -8,7 +8,7 @@
 #include "Board.hpp"
 
 Board::Board()
-	: _board(-1)
+	: _size(-1)
 {
 }
 
@@ -30,19 +30,25 @@ void	Board::initBoard(int size)
 
 bool	Board::isEmpty(int x, int y) const
 {
-	if (_board[x][y] == State::EMPTY)
+	if (_size == -1 || _board[x][y] == State::EMPTY)
 		return true;
 	return false;	
 }
 
-void	Board::putToken(int x, int y)
+bool	Board::putToken(int x, int y)
 {
-	if (_board[x][y] == State::EMPTY)
+	if (_size == -1)
+		return false;
+	else if (_board[x][y] == State::EMPTY)
 		_board[x][y] = State::MY;
+	return true;
 }
 
-void Board::ennemyPutToken(int x, int y)
+bool Board::ennemyPutToken(int x, int y)
 {
-	if (_board[x][y] == State::EMPTY)
+	if (_size == -1)
+		return false;
+	else if (_board[x][y] == State::EMPTY)
 		_board[x][y] = State::ENNEMY;
+	return true;
 }
