@@ -25,12 +25,14 @@ void	Board::initBoard(int size)
 		tmp.push_back(State::EMPTY);
 	for (int i = 0; i < size; i++)
 		_board.push_back(tmp);
-	_size = size;
+	_size = size - 1;
 }
 
 bool	Board::isEmpty(int x, int y) const
 {
-	if (_size == -1 || _board[x][y] == State::EMPTY)
+	if (_size == -1 || x > _size || y > _size)
+		return false;
+	else if (_board[x][y] == State::EMPTY)
 		return true;
 	return false;	
 }

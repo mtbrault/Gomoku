@@ -5,6 +5,9 @@
 ** IA method
 */
 
+#include <stdlib.h>
+#include <time.h>	//A SUPPRIMER
+
 #include "IA.hpp"
 
 static std::vector<std::string>	parsLine(const std::string &line, const std::string &delim)
@@ -32,6 +35,7 @@ IA::IA()
 	_convertSwitch["INFO"] = 5;
 	_convertSwitch["END"] = 6;
 	_convertSwitch["ABOUT"] = 7;
+	srand(time(NULL));
 }
 
 IA::~IA()
@@ -40,7 +44,14 @@ IA::~IA()
 
 std::pair<int, int>		IA::play()
 {
-	return std::make_pair(1, 2);
+	int	x = _board->getSize() / 2;
+	int	y = _board->getSize() / 2;
+
+	while (!_board->isEmpty(x, y)) {
+		x = rand() % _board->getSize() - 1;
+		y = rand() % _board->getSize() - 1;
+	}
+	return std::make_pair(x, y);
 }
 
 void	IA::start(const std::string &cmd)
@@ -50,11 +61,11 @@ void	IA::start(const std::string &cmd)
 	try {
 		size = std::stoi(cmd);
 	} catch (std::exception &ex) {
-		std::cout << "ERROR " << ex.what();
+		std::cout << "ERROR " << ex.what() << std::endl;
 		return ;
 	}
 	_board->initBoard(size);
-	std::cout << "OK - everything ok";
+	std::cout << "OK - everything ok\n";
 }
 
 void	IA::turn(const std::string &cmd)
@@ -68,24 +79,26 @@ void	IA::turn(const std::string &cmd)
 		x = std::stoi(vec[0]);
 		y = std::stoi(vec[1]);
 	} catch (std::exception &ex) {
-		std::cout << "ERROR " << ex.what();
+		std::cout << "ERROR " << ex.what() << std::endl;
 		return ;
 	}
-	if (!_board->ennemyPutToken(x, y))
-		std::cout << "ERROR empty board";
+	if (!_board->ennemyPutToken(x, y)) {
+		std::cout << "ERROR empty board\n";
+		return ;
+	}
 	pos = this->play();
 	if (!_board->putToken(pos.first, pos.second))
-		std::cout << "ERROR empty board";
-	std::cout << pos.first << "," << pos.second;
+		std::cout << "ERROR empty board\n";
+	std::cout << pos.first << "," << pos.second << std::endl;
 }
 
 void	IA::begin()
 {
 	int	size = _board->getSize();
 
-	std::cout << size / 2 << "," << size / 2;
+	std::cout << size / 2 << "," << size / 2 << std::endl;
 	if (!_board->putToken(size / 2, size / 2))
-		std::cout << "ERROR empty board";
+		std::cout << "ERROR empty board\n";
 }
 
 void	IA::board()
@@ -121,7 +134,7 @@ void	IA::run()
 			case 5 : this->info(cmd[1], cmd[2]); break;
 			case 6 : this->end(); break;
 			case 7 : this->about(); break;
-			default : std::cout << "UNKNOW unknow command" << std::endl;
+			default : std::cout << "UNKNOW This command doesn't exist\n";
 		}
 	}
 }
