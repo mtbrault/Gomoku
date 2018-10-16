@@ -65,7 +65,7 @@ void	IA::start(const std::string &cmd)
 		return ;
 	}
 	_board->initBoard(size);
-	std::cout << "OK - everything ok\n";
+	std::cout << "OK\n";
 }
 
 void	IA::turn(const std::string &cmd)
