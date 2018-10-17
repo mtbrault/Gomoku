@@ -7,56 +7,132 @@
 
 #include "IA.hpp"
 
-static std::vector<std::string>	parsLine(const std::string &line, const std::string &delim)
-{
-	std::vector<std::string>	val;
-	auto						start = 0;
-	auto						end = line.find(delim);
-	while ("Infinite loop") {
-		val.push_back(line.substr(start, end - start));
-		if (end == std::string::npos)
-			break ;
-		start = end + 1;
-		end = line.find(' ', start);
-	}
-	return val;
-}
-
 IA::IA()
-: _board(std::make_unique<Board>()), _depth(2), _actionSize(5)
+	: _depth(2), _size(5)
 {
-	_convertSwitch["START"] = 1;
-	_convertSwitch["TURN"] = 2;
-	_convertSwitch["BEGIN"] = 3;
-	_convertSwitch["BOARD"] = 4;
-	_convertSwitch["INFO"] = 5;
-	_convertSwitch["END"] = 6;
-	_convertSwitch["ABOUT"] = 7;
+	_checkFive.push_back(std::make_pair(0, 1));
+	_checkFive.push_back(std::make_pair(0, -1));
+	_checkFive.push_back(std::make_pair(1, 0));
+	_checkFive.push_back(std::make_pair(-1, 0));
+	_checkFive.push_back(std::make_pair(1, 1));
+	_checkFive.push_back(std::make_pair(-1, 1));
+	_checkFive.push_back(std::make_pair(1, -1));
+	_checkFive.push_back(std::make_pair(-1, -1));
 }
 
 IA::~IA()
 {
 }
 
-int		IA::min(std::vector<std::vector<State> > board, int depth)
+int		IA::eval()
 {
-	(void)board; (void)depth;
 	return 0;
 }
 
-std::pair<int, int>		IA::play(int x, int y)
+bool	IA::fiveRow(int x, int y, State state)
+{
+	unsigned int	vecX;
+	unsigned int	vecY;
+	int	counter;
+
+	for (auto &move : _checkFive) {
+		vecX = x;
+		vecY = y;
+		counter = 0;
+		for (int i = 0; i < 4; i++) {
+			vecX += move.first;
+			vecY += move.second;
+			if (vecX < 0 || vecX >= _board.size() || vecY < 0 || vecY >= _board.size())
+				break ;
+			else if (_board[vecX][vecY] == state)
+				counter++;
+			else
+				break ;
+		}
+		if (counter == 5)
+			return true;
+	}
+	return false;
+}
+
+int		IA::isEnd()
+{
+	for (unsigned int y = 0; y < _board.size(); y++) {
+		for (unsigned int x = 0; x < _board.size(); x++) {
+			if (_board[x][y] == State::ENNEMY) {
+				if (fiveRow(x, y, State::ENNEMY))
+					return 2;
+			}
+			else if (_board[x][y] == State::MY) {
+				if (fiveRow(x, y, State::MY))
+					return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+int		IA::max(int depth, int x, int y)
 {
 	int	max = -1000000;
 	int	val;
-	std::vector<std::vector<State> >	board = _board->getBoard();
+	int	end;
+	std::vector<std::pair<int, int> >	moveList;
+
+	if ((end = isEnd()) == 1)
+		return 1000 - (_depth - depth);
+	else if (end == 2)
+		return -1000 + (_depth - depth);
+	else if (depth == 0)
+		return eval();
+	moveList = fillMove(x, y);
+	for (auto &move : moveList) {
+		_board[move.first][move.second] = State::MY;
+		val = min(depth - 1, move.first, move.second);
+		if (val > max)
+			max = val;
+		_board[move.first][move.second] = State::EMPTY;
+	}
+	return max;
+}
+
+int		IA::min(int depth, int x, int y)
+{
+	int		min = 1000000;
+	int		val;
+	int		end;
+	std::vector<std::pair<int, int> >	moveList;
+
+	if ((end = isEnd()) == 1)
+		return 1000 - (_depth - depth);
+	else if (end == 2)
+		return -1000 + (_depth - depth);
+	else if (depth == 0)
+		return eval();
+	moveList = fillMove(x, y);
+	for (auto &move : moveList) {
+		_board[move.first][move.second] = State::ENNEMY;
+		val = max(depth - 1, move.first, move.second);
+		if (val < min)
+			min = val;
+		_board[move.first][move.second] = State::EMPTY;
+	}
+	return min;;
+}
+
+std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > board)
+{
+	int	max = -1000000;
+	int	val;
 	std::vector<std::pair<int, int> >	moveList;
 	std::pair<int, int>					tmpMove;
 
-	moveList = this->fillMove(x, y, _actionSize, _board->getSize());
+	_board = board;
+	moveList = this->fillMove(x, y);
 	for (auto &move : moveList) {
-		if (board[move.first][move.second] == State::EMPTY)
-			board[move.first][move.second] = State::MY;
-		val = this->min(board, _depth);
+		if (_board[move.first][move.second] == State::EMPTY)
+			_board[move.first][move.second] = State::MY;
+		val = this->min(_depth, move.first, move.second);
 		if (val > max) {
 			max = val;
 			tmpMove = move;
@@ -66,120 +142,36 @@ std::pair<int, int>		IA::play(int x, int y)
 	return tmpMove;
 }
 
-void	IA::start(const std::string &cmd)
+std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
 {
-	int	size;
+	int									boardSize = _board.size();
+	std::vector<std::pair<int, int> >	move;
 
-	try {
-		size = std::stoi(cmd);
-	} catch (std::exception &ex) {
-		std::cout << "ERROR " << ex.what() << std::endl;
-		return ;
-	}
-	_board->initBoard(size);
-	std::cout << "OK\n";
-}
-
-void	IA::turn(const std::string &cmd)
-{
-	std::vector<std::string>	vec = parsLine(cmd, ",");
-	std::pair<int, int>			pos;
-	int							x;
-	int							y;
-
-	try {
-		x = std::stoi(vec[0]);
-		y = std::stoi(vec[1]);
-	} catch (std::exception &ex) {
-		std::cout << "ERROR " << ex.what() << std::endl;
-		return ;
-	}
-	if (!_board->ennemyPutToken(x, y)) {
-		std::cout << "ERROR empty board\n";
-		return ;
-	}
-	pos = this->play(x, y);
-	if (!_board->putToken(pos.first, pos.second))
-		std::cout << "ERROR empty board\n";
-	std::cout << pos.first << "," << pos.second << std::endl;
-}
-
-void	IA::begin()
-{
-	int	size = _board->getSize();
-
-	std::cout << size / 2 << "," << size / 2 << std::endl;
-	if (!_board->putToken(size / 2, size / 2))
-		std::cout << "ERROR empty board\n";
-}
-
-void	IA::board()
-{
-}
-
-void	IA::info(const std::string &, const std::string &)
-{
-}
-
-void	IA::end()
-{
-}
-
-void	IA::about()
-{
-}
-
-void	IA::run()
-{
-	std::string					line;
-	std::vector<std::string>	cmd;
-
-	while ("Bouclinf") {
-		line.clear();
-		getline(std::cin, line);
-		cmd = parsLine(line, " ");
-		switch (_convertSwitch[cmd[0]]) {
-			case 1 : this->start(cmd[1]); break;
-			case 2 : this->turn(cmd[1]); break;
-			case 3 : this->begin(); break;
-			case 4 : this->board(); break;
-			case 5 : this->info(cmd[1], cmd[2]); break;
-			case 6 : this->end(); break;
-			case 7 : this->about(); break;
-			default : std::cout << "UNKNOW This command doesn't exist\n";
-		}
-	}
-}
-
-std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y, const int size, const int boardSize)
-{
-	std::vector<std::pair<int, int> > move;
-
-	for (int i = (size * -1) + 1; i < size; i++) {
+	for (int i = (_size * -1) + 1; i < _size; i++) {
 		if (x - i < 0 || x - i > boardSize || i == 0)
 			continue ;
-		else if (_board->getBoard()[x - i][y] != State::EMPTY)
+		else if (_board[x - i][y] != State::EMPTY)
 			continue ;
 		move.push_back(std::make_pair(x - i, y));
 	}
-	for (int i = (size * -1) + 1; i < size; i++) {
+	for (int i = (_size * -1) + 1; i < _size; i++) {
 		if (y - i < 0 || y - i > boardSize || i == 0)
 			continue ;
-		else if (_board->getBoard()[x][y - i] != State::EMPTY)
+		else if (_board[x][y - i] != State::EMPTY)
 			continue ;
 		move.push_back(std::make_pair(x, y - i));
 	}
-	for (int i = (size * -1) + 1; i < size; i++) {
+	for (int i = (_size * -1) + 1; i < _size; i++) {
 		if (y - i < 0 || y - i > boardSize || x - i < 0 || x - i > boardSize || i == 0)
 			continue ;
-		else if (_board->getBoard()[x - i][y - i] != State::EMPTY)
+		else if (_board[x - i][y - i] != State::EMPTY)
 			continue ;
 		move.push_back(std::make_pair(x - i, y - i));
 	}
-	for (int i = (size * - 1) + 1; i < size; i++) {
+	for (int i = (_size * - 1) + 1; i < _size; i++) {
 		if (y - i < 0 || y - i > boardSize || x + i < 0 || x + i > boardSize || i == 0)
 			continue ;
-		else if (_board->getBoard()[x + i][y - i] != State::EMPTY)
+		else if (_board[x + i][y - i] != State::EMPTY)
 			continue ;
 		move.push_back(std::make_pair(x + i, y - i));
 	}

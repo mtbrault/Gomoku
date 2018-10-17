@@ -5,12 +5,12 @@
 ** main file
 */
 
-#include "IA.hpp"
+#include "Game.hpp"
 
 int	main(void)
 {
-	std::unique_ptr<IA> ia = std::make_unique<IA>();
+	std::unique_ptr<Game> game = std::make_unique<Game>();
 
-	ia->run();
+	game->run();
 	return 0;
 }
