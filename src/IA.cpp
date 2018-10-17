@@ -5,7 +5,7 @@
 ** IA method
 */
 
-#include <cmath>
+#include <limits>
 #include "IA.hpp"
 
 static std::vector<std::string>	parsLine(const std::string &line, const std::string &delim)
