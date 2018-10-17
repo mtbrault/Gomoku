@@ -31,8 +31,8 @@ int		IA::eval()
 
 bool	IA::fiveRow(int x, int y, State state)
 {
-	unsigned int	vecX;
-	unsigned int	vecY;
+	int	vecX;
+	int	vecY;
 	int	counter;
 
 	for (auto &move : _checkFive) {
@@ -42,7 +42,7 @@ bool	IA::fiveRow(int x, int y, State state)
 		for (int i = 0; i < 4; i++) {
 			vecX += move.first;
 			vecY += move.second;
-			if (vecX < 0 || vecX >= _board.size() || vecY < 0 || vecY >= _board.size())
+			if (vecX < 0 || vecX >= (int)_board.size() || vecY < 0 || vecY >= (int)_board.size())
 				break ;
 			else if (_board[vecX][vecY] == state)
 				counter++;
