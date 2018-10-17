@@ -5,7 +5,6 @@
 ** IA method
 */
 
-#include <limits>
 #include "IA.hpp"
 
 static std::vector<std::string>	parsLine(const std::string &line, const std::string &delim)
@@ -47,7 +46,7 @@ int		IA::min(std::vector<std::vector<State> > board, int depth)
 
 std::pair<int, int>		IA::play(int x, int y)
 {
-	int	max = -INFINITY;
+	int	max = -1000000;
 	int	val;
 	std::vector<std::vector<State> >	board = _board->getBoard();
 	std::vector<std::pair<int, int> >	moveList;
