@@ -5,9 +5,6 @@
 ** IA method
 */
 
-#include <stdlib.h>
-#include <time.h>	//A SUPPRIMER
-
 #include "IA.hpp"
 
 static std::vector<std::string>	parsLine(const std::string &line, const std::string &delim)
@@ -26,7 +23,7 @@ static std::vector<std::string>	parsLine(const std::string &line, const std::str
 }
 
 IA::IA()
-: _board(std::make_unique<Board>())
+: _board(std::make_unique<Board>()), _depth(2), _actionSize(5)
 {
 	_convertSwitch["START"] = 1;
 	_convertSwitch["TURN"] = 2;
@@ -35,23 +32,38 @@ IA::IA()
 	_convertSwitch["INFO"] = 5;
 	_convertSwitch["END"] = 6;
 	_convertSwitch["ABOUT"] = 7;
-	srand(time(NULL));
 }
 
 IA::~IA()
 {
 }
 
-std::pair<int, int>		IA::play()
+int		IA::min(std::vector<std::vector<State> > board, int depth)
 {
-	int	x = _board->getSize() / 2;
-	int	y = _board->getSize() / 2;
+	(void)board; (void)depth;
+	return 0;
+}
 
-	while (!_board->isEmpty(x, y)) {
-		x = rand() % _board->getSize() - 1;
-		y = rand() % _board->getSize() - 1;
+std::pair<int, int>		IA::play(int x, int y)
+{
+	int	max = -INFINITY;
+	int	val;
+	std::vector<std::vector<State> >	board = _board->getBoard();
+	std::vector<std::pair<int, int> >	moveList;
+	std::pair<int, int>					tmpMove;
+
+	moveList = this->fillMove(x, y, _actionSize, _board->getSize());
+	for (auto &move : moveList) {
+		if (board[move.first][move.second] == State::EMPTY)
+			board[move.first][move.second] = State::MY;
+		val = this->min(board, _depth);
+		if (val > max) {
+			max = val;
+			tmpMove = move;
+		}
+		board[move.first][move.second] = State::EMPTY;
 	}
-	return std::make_pair(x, y);
+	return tmpMove;
 }
 
 void	IA::start(const std::string &cmd)
@@ -86,7 +98,7 @@ void	IA::turn(const std::string &cmd)
 		std::cout << "ERROR empty board\n";
 		return ;
 	}
-	pos = this->play();
+	pos = this->play(x, y);
 	if (!_board->putToken(pos.first, pos.second))
 		std::cout << "ERROR empty board\n";
 	std::cout << pos.first << "," << pos.second << std::endl;
@@ -137,4 +149,39 @@ void	IA::run()
 			default : std::cout << "UNKNOW This command doesn't exist\n";
 		}
 	}
+}
+
+std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y, const int size, const int boardSize)
+{
+	std::vector<std::pair<int, int> > move;
+
+	for (int i = (size * -1) + 1; i < size; i++) {
+		if (x - i < 0 || x - i > boardSize || i == 0)
+			continue ;
+		else if (_board->getBoard()[x - i][y] != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x - i, y));
+	}
+	for (int i = (size * -1) + 1; i < size; i++) {
+		if (y - i < 0 || y - i > boardSize || i == 0)
+			continue ;
+		else if (_board->getBoard()[x][y - i] != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x, y - i));
+	}
+	for (int i = (size * -1) + 1; i < size; i++) {
+		if (y - i < 0 || y - i > boardSize || x - i < 0 || x - i > boardSize || i == 0)
+			continue ;
+		else if (_board->getBoard()[x - i][y - i] != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x - i, y - i));
+	}
+	for (int i = (size * - 1) + 1; i < size; i++) {
+		if (y - i < 0 || y - i > boardSize || x + i < 0 || x + i > boardSize || i == 0)
+			continue ;
+		else if (_board->getBoard()[x + i][y - i] != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x + i, y - i));
+	}
+	return move;
 }

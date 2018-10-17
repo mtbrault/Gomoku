@@ -27,6 +27,7 @@ public:
 	bool	putToken(int, int);
 	bool	ennemyPutToken(int, int);
 	int		getSize() const {return _size;};
+	std::vector<std::vector<State> >	getBoard() const {return _board;};
 
 private:
 	std::vector<std::vector<State> >	_board;
