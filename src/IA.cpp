@@ -8,7 +8,7 @@
 #include "IA.hpp"
 
 IA::IA()
-	: _depth(2), _size(5)
+	: _depth(3), _size(5)
 {
 	_checkFive.push_back(std::make_pair(0, 1));
 	_checkFive.push_back(std::make_pair(0, -1));
@@ -144,7 +144,7 @@ std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > boa
 
 std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
 {
-	int									boardSize = _board.size();
+	int									boardSize = _board.size() - 1;
 	std::vector<std::pair<int, int> >	move;
 
 	for (int i = (_size * -1) + 1; i < _size; i++) {
