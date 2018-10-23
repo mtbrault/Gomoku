@@ -102,6 +102,7 @@ std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
 {
 	std::vector<std::pair<int, int> >	move;
 
+	(void)x; (void)y;
 	for (unsigned int yi = 0; yi < _board.size(); yi++) {
 		for (unsigned int xi = 0; xi < _board.size(); xi++) {
 			move.push_back(std::make_pair(yi, xi));
