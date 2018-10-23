@@ -10,6 +10,7 @@
 IA::IA()
 	: _size(5)
 {
+	(void)_size;
 	_checkFive.push_back(std::make_pair(0, 1));
 	_checkFive.push_back(std::make_pair(0, -1));
 	_checkFive.push_back(std::make_pair(1, 0));
@@ -48,7 +49,8 @@ int	IA::getMaxRow(int x, int y, State state)
 			vecY += move.second;
 			if (vecX < 0 || vecX >= (int)_board.size() || vecY < 0 || vecY >= (int)_board.size())
 				break ;
-			else if (_board[vecX][vecY] == state)
+			else if (_board[vecX][vecY] == state && (_board[vecX + move.first][vecY + move.second] == state
+												 || _board[vecX + move.first][vecY + move.second] == State::EMPTY))
 				counter++;
 			else
 				break ;
@@ -108,6 +110,7 @@ std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
 			move.push_back(std::make_pair(yi, xi));
 		}
 	}
+	return move;
 	/*int									boardSize = _board.size() - 1;
 	std::vector<std::pair<int, int> >	move;
 
