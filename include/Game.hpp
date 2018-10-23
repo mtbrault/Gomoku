@@ -31,6 +31,7 @@ private:
 	std::unique_ptr<Board>					_board;
 	std::unique_ptr<IA>						_ia;
 	std::unordered_map<std::string, int>	_convertSwitch;
+	bool									_end;
 };
 
 #endif /* !Game_HPP_ */

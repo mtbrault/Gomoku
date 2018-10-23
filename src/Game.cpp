@@ -23,7 +23,7 @@ static std::vector<std::string>	parsLine(const std::string &line, const std::str
 }
 
 Game::Game()
-: _board(std::make_unique<Board>()), _ia(std::make_unique<IA>())
+: _board(std::make_unique<Board>()), _ia(std::make_unique<IA>()), _end(false)
 {
 	_convertSwitch["START"] = 1;
 	_convertSwitch["TURN"] = 2;
@@ -96,6 +96,7 @@ void	Game::info(const std::string &, const std::string &)
 
 void	Game::end()
 {
+	_end = true;
 }
 
 void	Game::about()
@@ -107,7 +108,7 @@ void	Game::run()
 	std::string					line;
 	std::vector<std::string>	cmd;
 
-	while ("Bouclinf") {
+	while (_end == false) {
 		line.clear();
 		getline(std::cin, line);
 		cmd = parsLine(line, " ");

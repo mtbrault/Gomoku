@@ -27,7 +27,7 @@ IA::~IA()
 int		IA::eval()
 {
 	int	myRow = maxRow(State::MY);
-	int	ennemyRow = maxRow(State::ENNEMY);
+	int	ennemyRow = maxRow(State::ENNEMY) + 1;
 
 	return myRow - ennemyRow;
 }
