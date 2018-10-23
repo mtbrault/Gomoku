@@ -21,6 +21,7 @@ public:
 
 private:
 	int									eval();
+	bool								checkPosition(int, int, std::pair<int, int>, State);
 	int									getMaxRow(int, int, State);
 	int									maxRow(State);
 	std::vector<std::pair<int, int> >	fillMove(const int, const int);

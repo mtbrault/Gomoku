@@ -33,6 +33,17 @@ int		IA::eval()
 	return myRow - ennemyRow;
 }
 
+bool IA::checkPosition(int x, int y, std::pair<int, int> move, State state)
+{
+	if (x + move.first >= (int)_board.size() || y + move.second >= (int)_board.size()
+	   || x + move.first < 0 || y + move.second < 0)
+		return false;
+	else if (_board[x + move.first][y + move.second] == state
+		  || _board[x + move.first][y + move.second] == State::EMPTY)
+		return false;
+	return true;
+}
+
 int	IA::getMaxRow(int x, int y, State state)
 {
 	int	vecX;
@@ -49,8 +60,7 @@ int	IA::getMaxRow(int x, int y, State state)
 			vecY += move.second;
 			if (vecX < 0 || vecX >= (int)_board.size() || vecY < 0 || vecY >= (int)_board.size())
 				break ;
-			else if (_board[vecX][vecY] == state && (_board[vecX + move.first][vecY + move.second] == state
-												 || _board[vecX + move.first][vecY + move.second] == State::EMPTY))
+			else if (_board[vecX][vecY] == state && checkPosition(vecX, vecY, move, state))
 				counter++;
 			else
 				break ;
