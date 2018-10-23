@@ -100,7 +100,14 @@ std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > boa
 
 std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
 {
-	int									boardSize = _board.size() - 1;
+	std::vector<std::pair<int, int> >	move;
+
+	for (unsigned int y = 0; y < _board.size(); y++) {
+		for (unsigned int x = 0; x < _board.size(); x++) {
+			move.push_back(std::make_pair(y, x));
+		}
+	}
+	/*int									boardSize = _board.size() - 1;
 	std::vector<std::pair<int, int> >	move;
 
 	for (int i = (_size * -1) + 1; i < _size; i++) {
@@ -131,5 +138,5 @@ std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
 			continue ;
 		move.push_back(std::make_pair(x + i, y - i));
 	}
-	return move;
+	return move;*/
 }
