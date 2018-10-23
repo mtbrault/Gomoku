@@ -8,7 +8,7 @@
 #include "IA.hpp"
 
 IA::IA()
-	: _depth(3), _size(5)
+	: _size(5)
 {
 	_checkFive.push_back(std::make_pair(0, 1));
 	_checkFive.push_back(std::make_pair(0, -1));
@@ -26,14 +26,18 @@ IA::~IA()
 
 int		IA::eval()
 {
-	return 0;
+	int	myRow = maxRow(State::MY);
+	int	ennemyRow = maxRow(State::ENNEMY);
+
+	return myRow - ennemyRow;
 }
 
-bool	IA::fiveRow(int x, int y, State state)
+int	IA::getMaxRow(int x, int y, State state)
 {
 	int	vecX;
 	int	vecY;
 	int	counter;
+	int	maxCounter = 0;
 
 	for (auto &move : _checkFive) {
 		vecX = x;
@@ -49,75 +53,27 @@ bool	IA::fiveRow(int x, int y, State state)
 			else
 				break ;
 		}
-		if (counter == 5)
-			return true;
+		if (counter > maxCounter)
+			maxCounter = counter;
 	}
-	return false;
+	return maxCounter;
 }
 
-int		IA::isEnd()
+int		IA::maxRow(State state)
 {
+	int	max = 0;
+	int	val;
+
 	for (unsigned int y = 0; y < _board.size(); y++) {
 		for (unsigned int x = 0; x < _board.size(); x++) {
-			if (_board[x][y] == State::ENNEMY) {
-				if (fiveRow(x, y, State::ENNEMY))
-					return 2;
-			}
-			else if (_board[x][y] == State::MY) {
-				if (fiveRow(x, y, State::MY))
-					return 1;
+			if (_board[x][y] == state) {
+				val = getMaxRow(x, y, state);
+				if (val > max)
+					max = val;
 			}
 		}
 	}
-	return 0;
-}
-
-int		IA::max(int depth, int x, int y)
-{
-	int	max = -1000000;
-	int	val;
-	int	end;
-	std::vector<std::pair<int, int> >	moveList;
-
-	if ((end = isEnd()) == 1)
-		return 1000 - (_depth - depth);
-	else if (end == 2)
-		return -1000 + (_depth - depth);
-	else if (depth == 0)
-		return eval();
-	moveList = fillMove(x, y);
-	for (auto &move : moveList) {
-		_board[move.first][move.second] = State::MY;
-		val = min(depth - 1, move.first, move.second);
-		if (val > max)
-			max = val;
-		_board[move.first][move.second] = State::EMPTY;
-	}
 	return max;
-}
-
-int		IA::min(int depth, int x, int y)
-{
-	int		min = 1000000;
-	int		val;
-	int		end;
-	std::vector<std::pair<int, int> >	moveList;
-
-	if ((end = isEnd()) == 1)
-		return 1000 - (_depth - depth);
-	else if (end == 2)
-		return -1000 + (_depth - depth);
-	else if (depth == 0)
-		return eval();
-	moveList = fillMove(x, y);
-	for (auto &move : moveList) {
-		_board[move.first][move.second] = State::ENNEMY;
-		val = max(depth - 1, move.first, move.second);
-		if (val < min)
-			min = val;
-		_board[move.first][move.second] = State::EMPTY;
-	}
-	return min;;
 }
 
 std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > board)
@@ -132,7 +88,7 @@ std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > boa
 	for (auto &move : moveList) {
 		if (_board[move.first][move.second] == State::EMPTY)
 			_board[move.first][move.second] = State::MY;
-		val = this->min(_depth, move.first, move.second);
+		val = eval();
 		if (val > max) {
 			max = val;
 			tmpMove = move;
