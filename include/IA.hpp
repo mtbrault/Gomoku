@@ -17,17 +17,9 @@ public:
 	IA();
 	~IA();
 
-	std::pair<int, int>					play(int, int, std::vector<std::vector<State> >);
+	std::pair<int, int>					play(std::vector<std::vector<Tile> >);
 
 private:
-	int									eval();
-	bool								checkPosition(int, int, std::pair<int, int>, State);
-	int									getMaxRow(int, int, State);
-	int									maxRow(State);
-	std::vector<std::pair<int, int> >	fillMove(const int, const int);
-	int									_size;
-	std::vector<std::vector<State> >	_board;
-	std::vector<std::pair<int, int> >	_checkFive;
 };
 
 #endif /* !IA_HPP_ */

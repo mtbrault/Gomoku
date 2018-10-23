@@ -18,11 +18,11 @@ Board::~Board()
 
 void	Board::initBoard(int size)
 {
-	std::vector<State>	tmp;
+	std::vector<Tile>	tmp;
 
 	_board.clear();
 	for (int i = 0; i < size; i++)
-		tmp.push_back(State::EMPTY);
+		tmp.push_back(Tile());
 	for (int i = 0; i < size; i++)
 		_board.push_back(tmp);
 	_size = size - 1;
@@ -32,7 +32,7 @@ bool	Board::isEmpty(int x, int y) const
 {
 	if (_size == -1 || x > _size || y > _size)
 		return false;
-	else if (_board[x][y] == State::EMPTY)
+	else if (_board[x][y].getOwner() == State::EMPTY)
 		return true;
 	return false;	
 }
@@ -41,8 +41,9 @@ bool	Board::putToken(int x, int y)
 {
 	if (_size == -1)
 		return false;
-	else if (_board[x][y] == State::EMPTY)
-		_board[x][y] = State::MY;
+	else if (_board[x][y].getOwner() == State::EMPTY)
+		_board[x][y].setOwner(State::MY);
+	calcScore(x, y, State::MY);
 	return true;
 }
 
@@ -50,7 +51,90 @@ bool Board::ennemyPutToken(int x, int y)
 {
 	if (_size == -1)
 		return false;
-	else if (_board[x][y] == State::EMPTY)
-		_board[x][y] = State::ENNEMY;
+	else if (_board[x][y].getOwner() == State::EMPTY)
+		_board[x][y].setOwner(State::ENNEMY);
+	calcScore(x, y, State::ENNEMY);
 	return true;
+}
+
+float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
+{
+	std::array<float, 4>		listVal = {1.75, 1.5, 1.25, 1};
+	float						result = 0;
+	State						val;
+
+	for (int i = 0; i < 4; i++) {
+		if (x + dir.first < 0 || x + dir.first >= _size || y + dir.second < 0 || y + dir.second >= _size)
+			break ;
+		val = _board[x + dir.first][y + dir.second].getOwner();
+		if (val == state)
+			result += listVal[i];
+		else if (val != state && val != State::EMPTY)
+			break ;
+	}
+	for (int i = 0; i < 4; i++) {
+		if (x - dir.first < 0 || x - dir.first >= _size || y - dir.second < 0 || y - dir.second >= _size)
+			break ;
+		val = _board[x - dir.first][y - dir.second].getOwner();
+		if (val == state)
+			result += listVal[i];
+		else if (val != state && val != State::EMPTY)
+			break ;
+	}
+	return result;
+}
+
+void	Board::calcScore(int x, int y, State state)
+{
+	std::vector<std::pair<int, int> >	listMove = fillMove(x, y);
+	std::array<float, 4>				listVal;
+
+	for (auto &move : listMove) {
+		if (_board[move.first][move.second].getOwner() == State::EMPTY) {
+			listVal[0] = calcLine(x, y, state, std::make_pair(0, 1));
+			listVal[1] = calcLine(x, y, state, std::make_pair(1, 0));
+			listVal[2] = calcLine(x, y, state, std::make_pair(1, 1));
+			listVal[3] = calcLine(x, y, state, std::make_pair(-1, 1));
+			if (state == State::MY)
+				_board[move.first][move.second].setMyScore(listVal);
+			else if (state == State::ENNEMY)
+				_board[move.first][move.second].setEnnemyScore(listVal);
+		}
+	}
+}
+
+std::vector<std::pair<int, int> >	Board::fillMove(const int x, const int y)
+{
+	int									boardSize = _board.size() - 1;
+	std::vector<std::pair<int, int> >	move;
+
+	for (int i = -4; i <= 4; i++) {
+		if (x - i < 0 || x - i > boardSize || i == 0)
+			continue ;
+		else if (_board[x - i][y].getOwner() != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x - i, y));
+	}
+	for (int i = -4; i <= 4; i++) {
+		if (y - i < 0 || y - i > boardSize || i == 0)
+			continue ;
+		else if (_board[x][y - i].getOwner() != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x, y - i));
+	}
+	for (int i = -4; i <= 4; i++) {
+		if (y - i < 0 || y - i > boardSize || x - i < 0 || x - i > boardSize || i == 0)
+			continue ;
+		else if (_board[x - i][y - i].getOwner() != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x - i, y - i));
+	}
+	for (int i = -4; i <= 4; i++) {
+		if (y - i < 0 || y - i > boardSize || x + i < 0 || x + i > boardSize || i == 0)
+			continue ;
+		else if (_board[x + i][y - i].getOwner() != State::EMPTY)
+			continue ;
+		move.push_back(std::make_pair(x + i, y - i));
+	}
+	return move;
 }

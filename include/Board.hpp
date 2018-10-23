@@ -8,14 +8,11 @@
 #ifndef BOARD_HPP_
 	#define BOARD_HPP_
 
-enum State {
-	EMPTY,
-	MY,
-	ENNEMY
-};
-
 #include <vector>
 #include <iostream>
+#include <utility>
+#include "Tile.hpp"
+
 class Board
 {
 public:
@@ -27,11 +24,14 @@ public:
 	bool	putToken(int, int);
 	bool	ennemyPutToken(int, int);
 	int		getSize() const {return _size;};
-	std::vector<std::vector<State> >	getBoard() const {return _board;};
+	std::vector<std::vector<Tile> >	getBoard() const {return _board;};
 
 private:
-	std::vector<std::vector<State> >	_board;
-	int									_size;
+	void								calcScore(int, int, State);
+	float								calcLine(int, int, State, std::pair<int, int>);
+	std::vector<std::pair<int, int> >	fillMove(const int, const int);
+	std::vector<std::vector<Tile> >	_board;
+	int								_size;
 };
 
 #endif /* !BOARD_HPP_ */

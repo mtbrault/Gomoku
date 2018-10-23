@@ -70,20 +70,20 @@ void	Game::turn(const std::string &cmd)
 		std::cout << "ERROR empty board\n";
 		return ;
 	}
-	pos = _ia->play(x, y, _board->getBoard());
-	if (!_board->putToken(pos.first, pos.second))
+	pos = _ia->play(_board->getBoard());
+	if (!_board->putToken(pos.first, pos.second)) {
 		std::cout << "ERROR empty board\n";
+		return ;
+	}
 	std::cout << pos.first << "," << pos.second << std::endl;
 }
 
 void	Game::begin()
 {
-	int	size = _board->getSize();
-
-	if (!_board->putToken(size / 2, size / 2))
+	if (!_board->putToken(0, 0))
 		std::cout << "ERROR empty board\n";
 	else
-		std::cout << size / 2 << "," << size / 2 << std::endl;
+		std::cout << "0, 0" << std::endl;
 }
 
 void	Game::board()

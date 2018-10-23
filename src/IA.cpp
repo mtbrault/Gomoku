@@ -8,152 +8,45 @@
 #include "IA.hpp"
 
 IA::IA()
-	: _size(5)
 {
-	(void)_size;
-	_checkFive.push_back(std::make_pair(0, 1));
-	_checkFive.push_back(std::make_pair(0, -1));
-	_checkFive.push_back(std::make_pair(1, 0));
-	_checkFive.push_back(std::make_pair(-1, 0));
-	_checkFive.push_back(std::make_pair(1, 1));
-	_checkFive.push_back(std::make_pair(-1, 1));
-	_checkFive.push_back(std::make_pair(1, -1));
-	_checkFive.push_back(std::make_pair(-1, -1));
 }
 
 IA::~IA()
 {
 }
 
-int		IA::eval()
+float	getMax(std::array<float, 4> tab)
 {
-	int	myRow = maxRow(State::MY);
-	int	ennemyRow = maxRow(State::ENNEMY) + 1;
+	float max = tab[0];
 
-	return myRow - ennemyRow;
-}
-
-bool IA::checkPosition(int x, int y, std::pair<int, int> move, State state)
-{
-	if (x + move.first >= (int)_board.size() || y + move.second >= (int)_board.size()
-	   || x + move.first < 0 || y + move.second < 0)
-		return false;
-	else if (_board[x + move.first][y + move.second] == state
-		  || _board[x + move.first][y + move.second] == State::EMPTY)
-		return false;
-	return true;
-}
-
-int	IA::getMaxRow(int x, int y, State state)
-{
-	int	vecX;
-	int	vecY;
-	int	counter;
-	int	maxCounter = 0;
-
-	for (auto &move : _checkFive) {
-		vecX = x;
-		vecY = y;
-		counter = 0;
-		for (int i = 0; i < (int)_board.size(); i++) {
-			vecX += move.first;
-			vecY += move.second;
-			if (vecX < 0 || vecX >= (int)_board.size() || vecY < 0 || vecY >= (int)_board.size())
-				break ;
-			else if ((_board[vecX][vecY] == state || _board[vecX][vecY] == State::EMPTY)
-							&& checkPosition(vecX, vecY, move, state))
-				counter++;
-			else
-				break ;
-		}
-		if (counter > maxCounter)
-			maxCounter = counter;
-	}
-	return maxCounter;
-}
-
-int		IA::maxRow(State state)
-{
-	int	max = 0;
-	int	val;
-
-	for (unsigned int y = 0; y < _board.size(); y++) {
-		for (unsigned int x = 0; x < _board.size(); x++) {
-			if (_board[x][y] == state) {
-				val = getMaxRow(x, y, state);
-				if (val > max)
-					max = val;
-			}
-		}
+	for (int i = 1; i < 4; i++) {
+		if (tab[i] > max)
+			max = tab[i];
 	}
 	return max;
 }
 
-std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > board)
+std::pair<int, int>		IA::play(std::vector<std::vector<Tile> > board)
 {
-	int	max = -1000000;
-	int	val;
-	std::vector<std::pair<int, int> >	moveList;
-	std::pair<int, int>					tmpMove;
+	std::pair<int, int>		pos;
+	std::array<float, 4>	tmp;
+	std::array<float, 4>	bestArray = {0, 0, 0, 0};
 
-	_board = board;
-	moveList = this->fillMove(x, y);
-	for (auto &move : moveList) {
-		if (_board[move.first][move.second] == State::EMPTY)
-			_board[move.first][move.second] = State::MY;
-		else
-			continue ;
-		val = eval();
-		if (val > max) {
-			max = val;
-			tmpMove = move;
-		}
-		board[move.first][move.second] = State::EMPTY;
-	}
-	return tmpMove;
-}
-
-std::vector<std::pair<int, int> >	IA::fillMove(const int x, const int y)
-{
-	std::vector<std::pair<int, int> >	move;
-
-	(void)x; (void)y;
-	for (unsigned int yi = 0; yi < _board.size(); yi++) {
-		for (unsigned int xi = 0; xi < _board.size(); xi++) {
-			move.push_back(std::make_pair(yi, xi));
+	for (int x = 0; x < (int)board.size(); x++) {
+		for (int y = 0; y < (int)board.size(); y++) {
+			if (board[x][y].getOwner() == State::EMPTY) {
+				tmp = board[x][y].getMyScore();
+				if (getMax(tmp) > getMax(bestArray)) {
+					bestArray = tmp;
+					pos = std::make_pair(x, y);
+				}
+				tmp = board[x][y].getEnnemyScore();
+				if (getMax(tmp) > getMax(bestArray)) {
+					bestArray = tmp;
+					pos = std::make_pair(x, y);
+				}
+			}
 		}
 	}
-	return move;
-	/*int									boardSize = _board.size() - 1;
-	std::vector<std::pair<int, int> >	move;
-
-	for (int i = (_size * -1) + 1; i < _size; i++) {
-		if (x - i < 0 || x - i > boardSize || i == 0)
-			continue ;
-		else if (_board[x - i][y] != State::EMPTY)
-			continue ;
-		move.push_back(std::make_pair(x - i, y));
-	}
-	for (int i = (_size * -1) + 1; i < _size; i++) {
-		if (y - i < 0 || y - i > boardSize || i == 0)
-			continue ;
-		else if (_board[x][y - i] != State::EMPTY)
-			continue ;
-		move.push_back(std::make_pair(x, y - i));
-	}
-	for (int i = (_size * -1) + 1; i < _size; i++) {
-		if (y - i < 0 || y - i > boardSize || x - i < 0 || x - i > boardSize || i == 0)
-			continue ;
-		else if (_board[x - i][y - i] != State::EMPTY)
-			continue ;
-		move.push_back(std::make_pair(x - i, y - i));
-	}
-	for (int i = (_size * - 1) + 1; i < _size; i++) {
-		if (y - i < 0 || y - i > boardSize || x + i < 0 || x + i > boardSize || i == 0)
-			continue ;
-		else if (_board[x + i][y - i] != State::EMPTY)
-			continue ;
-		move.push_back(std::make_pair(x + i, y - i));
-	}
-	return move;*/
+	return pos;
 }
