@@ -55,12 +55,13 @@ int	IA::getMaxRow(int x, int y, State state)
 		vecX = x;
 		vecY = y;
 		counter = 0;
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < (int)_board.size(); i++) {
 			vecX += move.first;
 			vecY += move.second;
 			if (vecX < 0 || vecX >= (int)_board.size() || vecY < 0 || vecY >= (int)_board.size())
 				break ;
-			else if (_board[vecX][vecY] == state && checkPosition(vecX, vecY, move, state))
+			else if ((_board[vecX][vecY] == state || _board[vecX][vecY] == State::EMPTY)
+							&& checkPosition(vecX, vecY, move, state))
 				counter++;
 			else
 				break ;
