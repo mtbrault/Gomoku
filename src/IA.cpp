@@ -100,6 +100,8 @@ std::pair<int, int>		IA::play(int x, int y, std::vector<std::vector<State> > boa
 	for (auto &move : moveList) {
 		if (_board[move.first][move.second] == State::EMPTY)
 			_board[move.first][move.second] = State::MY;
+		else
+			continue ;
 		val = eval();
 		if (val > max) {
 			max = val;
