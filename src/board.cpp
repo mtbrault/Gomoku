@@ -63,21 +63,21 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 	float						result = 0;
 	State						val;
 
-	for (int i = 0; i < 4; i++) {
-		if (x + dir.first < 0 || x + dir.first >= _size || y + dir.second < 0 || y + dir.second >= _size)
+	for (int i = 1; i < 5; i++) {
+		if (x + (dir.first * i) < 0 || x + (dir.first * i) >= _size || y + (dir.second * i) < 0 || y + (dir.second * i) >= _size)
 			break ;
-		val = _board[x + dir.first][y + dir.second].getOwner();
+		val = _board[x + (dir.first * i)][y + (dir.second * i)].getOwner();
 		if (val == state)
-			result += listVal[i];
+			result += listVal[i - 1];
 		else if (val != state && val != State::EMPTY)
 			break ;
 	}
-	for (int i = 0; i < 4; i++) {
-		if (x - dir.first < 0 || x - dir.first >= _size || y - dir.second < 0 || y - dir.second >= _size)
+	for (int i = 1; i < 5; i++) {
+		if (x - (dir.first * i) < 0 || x - (dir.first * i) >= _size || y - (dir.second * i) < 0 || y - (dir.second * i) >= _size)
 			break ;
-		val = _board[x - dir.first][y - dir.second].getOwner();
+		val = _board[x - (dir.first * i)][y - (dir.second * i)].getOwner();
 		if (val == state)
-			result += listVal[i];
+			result += listVal[i - 1];
 		else if (val != state && val != State::EMPTY)
 			break ;
 	}
@@ -91,10 +91,10 @@ void	Board::calcScore(int x, int y, State state)
 
 	for (auto &move : listMove) {
 		if (_board[move.first][move.second].getOwner() == State::EMPTY) {
-			listVal[0] = calcLine(x, y, state, std::make_pair(0, 1));
-			listVal[1] = calcLine(x, y, state, std::make_pair(1, 0));
-			listVal[2] = calcLine(x, y, state, std::make_pair(1, 1));
-			listVal[3] = calcLine(x, y, state, std::make_pair(-1, 1));
+			listVal[0] = calcLine(move.first, move.second, state, std::make_pair(0, 1));
+			listVal[1] = calcLine(move.first, move.second, state, std::make_pair(1, 0));
+			listVal[2] = calcLine(move.first, move.second, state, std::make_pair(1, 1));
+			listVal[3] = calcLine(move.first, move.second, state, std::make_pair(-1, 1));
 			if (state == State::MY)
 				_board[move.first][move.second].setMyScore(listVal);
 			else if (state == State::ENNEMY)

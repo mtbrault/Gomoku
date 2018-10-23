@@ -83,7 +83,7 @@ void	Game::begin()
 	if (!_board->putToken(0, 0))
 		std::cout << "ERROR empty board\n";
 	else
-		std::cout << "0, 0" << std::endl;
+		std::cout << "0,0" << std::endl;
 }
 
 void	Game::board()
