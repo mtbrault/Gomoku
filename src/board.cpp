@@ -61,6 +61,7 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 {
 	std::array<float, 4>		listVal = {1.75, 1.5, 1.25, 1};
 	float						result = 0;
+	float						oldResult;
 	State						val;
 
 	for (int i = 1; i < 5; i++) {
@@ -72,6 +73,11 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 		else if (val != state)
 			break ;
 	}
+	if (result == 4.5)
+		return 99;
+	else if (result == 5.5)
+		return 100;
+	oldResult = result;
 	for (int i = 1; i < 5; i++) {
 		if (x - (dir.first * i) < 0 || x - (dir.first * i) > _size || y - (dir.second * i) < 0 || y - (dir.second * i) > _size)
 			break ;
@@ -81,6 +87,10 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 		else if (val != state)
 			break ;
 	}
+	if (result - oldResult == 4.5)
+		return 99;
+	else if (result == 5.5)
+		return 100;
 	return result;
 }
 
