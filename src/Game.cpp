@@ -80,10 +80,12 @@ void	Game::turn(const std::string &cmd)
 
 void	Game::begin()
 {
-	if (!_board->putToken(0, 0))
+	int	size = _board->getSize();
+
+	if (!_board->putToken(size, size))
 		std::cout << "ERROR empty board\n";
 	else
-		std::cout << _board->getSize() << "," << _board->getSize() << std::endl;
+		std::cout << size << "," << size << std::endl;
 }
 
 void	Game::board()
