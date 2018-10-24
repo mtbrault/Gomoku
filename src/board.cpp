@@ -64,7 +64,7 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 	State						val;
 
 	for (int i = 1; i < 5; i++) {
-		if (x + (dir.first * i) < 0 || x + (dir.first * i) >= _size || y + (dir.second * i) < 0 || y + (dir.second * i) >= _size)
+		if (x + (dir.first * i) < 0 || x + (dir.first * i) > _size || y + (dir.second * i) < 0 || y + (dir.second * i) > _size)
 			break ;
 		val = _board[x + (dir.first * i)][y + (dir.second * i)].getOwner();
 		if (val == state)
@@ -75,7 +75,7 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 			break ;
 	}
 	for (int i = 1; i < 5; i++) {
-		if (x - (dir.first * i) < 0 || x - (dir.first * i) >= _size || y - (dir.second * i) < 0 || y - (dir.second * i) >= _size)
+		if (x - (dir.first * i) < 0 || x - (dir.first * i) > _size || y - (dir.second * i) < 0 || y - (dir.second * i) > _size)
 			break ;
 		val = _board[x - (dir.first * i)][y - (dir.second * i)].getOwner();
 		if (val == state)
