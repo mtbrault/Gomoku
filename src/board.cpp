@@ -85,8 +85,6 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 		else if (val != state)
 			break ;
 	}
-	if (result == 4.5)
-		result = 99;
 	return result;
 }
 
