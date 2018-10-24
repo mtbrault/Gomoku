@@ -70,7 +70,7 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 		if (val == state)
 			result += listVal[i - 1];
 		else if (val == State::EMPTY)
-			result += 0.25;
+			result += 0.01;
 		else if (val != state)
 			break ;
 	}
@@ -81,7 +81,7 @@ float	Board::calcLine(int x, int y, State state, std::pair<int, int> dir)
 		if (val == state)
 			result += listVal[i - 1];
 		else if (val == State::EMPTY)
-			result += 0.25;
+			result += 0.01;
 		else if (val != state)
 			break ;
 	}
