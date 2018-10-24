@@ -26,6 +26,24 @@ float	getMax(std::array<float, 4> tab)
 	return max;
 }
 
+float	getSecondMax(std::array<float, 4> tab)
+{
+	int	max = 0;
+	int	i;
+
+	for (i = 0; i < 4; i++) {
+		if (tab[i] > tab[max])
+			max = i;
+	}
+	tab[i] = 0;
+	max = 0;
+	for (i = 0; i < 4; i++) {
+		if (tab[i] > tab[max])
+			max = i;
+	}
+	return tab[max];
+}
+
 std::pair<int, int>		IA::play(std::vector<std::vector<Tile> > board)
 {
 	std::pair<int, int>		pos;
@@ -44,6 +62,12 @@ std::pair<int, int>		IA::play(std::vector<std::vector<Tile> > board)
 				if (getMax(tmp) > getMax(bestArray)) {
 					bestArray = tmp;
 					pos = std::make_pair(x, y);
+				}
+				else if (getMax(tmp) == getMax(bestArray)) {
+					if (getSecondMax(tmp) > getSecondMax(bestArray)) {
+						bestArray = tmp;
+						pos = std::make_pair(x, y);
+					}
 				}
 			}
 		}
