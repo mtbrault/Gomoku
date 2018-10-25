@@ -8,7 +8,6 @@
 #ifndef IA_HPP_
 	#define IA_HPP_
 
-#include <utility>
 #include <vector>
 #include "Board.hpp"
 
